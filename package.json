@@ -1,0 +1,32 @@
+{
+  "name": "arigatousv",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon src/server.js"
+  },
+  "author": "mansinh",
+  "license": "ISC",
+  "dependencies": {
+    "@sequelize/core": "^7.0.0-alpha.29",
+    "body-parser": "^1.20.1",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "ejs": "^3.1.8",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^8.5.1",
+    "mysql2": "^3.1.2",
+    "node-modules": "^1.0.1",
+    "sequelize": "^6.28.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.20.12",
+    "@babel/node": "^7.20.7",
+    "@babel/preset-env": "^7.20.2",
+    "nodemon": "^2.0.20",
+    "sequelize-cli": "^6.6.0"
+  }
+}
