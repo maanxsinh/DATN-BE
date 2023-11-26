@@ -139,7 +139,7 @@ const uploadProduct = async (req, res) => {
   }
 };
 
-// BUYER controller
+// BUYER CONTROLLER
 
 const productDetail = async (req, res) => {
   try {
