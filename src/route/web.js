@@ -21,6 +21,10 @@ let initWebRoutes = (app) => {
   router.get("/getAllConversation", userController.getAllConversation);
   router.post("/confirmProduct", userController.confirmProduct);
   router.post("/deleteProduct", userController.deleteProduct);
+  router.get("/getUsers", userController.getUsers);
+  router.post("/editUser", userController.editUser);
+  router.post("/createUser", userController.createUser);
+  router.post("/deleteUser", userController.deleteUser);
 
   return app.use("/", router);
 };

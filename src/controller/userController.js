@@ -111,6 +111,106 @@ const deleteProduct = async (req, res) => {
   }
 };
 
+const getUsers = async (req, res) => {
+  try {
+    let users = await userService.getUsers();
+    return res.status(200).json({
+      errCode: 0,
+      errMessage: "success",
+      data: users,
+    });
+  } catch (e) {
+    return res.status(200).json({
+      errCode: 1,
+      errMessage: "get users failed",
+    });
+  }
+};
+
+const editUser = async (req, res) => {
+  try {
+    let data = req.body.data;
+    let userId = req.body.userId;
+    let edit = { address: "abc" };
+    if (!userId) {
+      return res.status(200).json({
+        errCode: 1,
+        errMessage: "missing userId",
+      });
+    }
+    await userService.editUser(data, userId);
+    console.log(">>>data in controller:", userId);
+    return res.status(200).json({
+      errCode: 0,
+      errMessage: "update success",
+      data: userId,
+    });
+  } catch (e) {
+    console.log(">>>update user failded:", e);
+    return res.status(200).json({
+      errCode: 1,
+      errMessage: "update user failed",
+    });
+  }
+};
+
+const createUser = async (req, res) => {
+  try {
+    let data = req.body.data;
+    let testData = {
+      fullName: "abc",
+      email: "abc@gmail.com",
+      password: "123456",
+      phoneNumber: "0113334444",
+      gender: "Other",
+      typeRole: "R2",
+      address: "dau cung duoc",
+    };
+    if (!data) {
+      return res.status(200).json({
+        errCode: 1,
+        errMessage: "missing data",
+      });
+    }
+    let user = await userService.createUser(data);
+    return res.status(200).json({
+      errCode: 0,
+      errMessage: "create user success",
+      data: user,
+    });
+  } catch (e) {
+    console.log("---create user failed:", e);
+    return res.status(200).json({
+      errCode: 1,
+      errMessage: "---create user failed",
+    });
+  }
+};
+
+const deleteUser = async (req, res) => {
+  try {
+    let userId = req.body.userId;
+    if (!userId) {
+      return res.status(200).json({
+        errCode: 1,
+        errMessage: "missing userId",
+      });
+    }
+    let userDelete = await userService.deleteUser(userId);
+    return res.status(200).json({
+      errCode: 0,
+      errMessage: "success",
+      data: userDelete,
+    });
+  } catch (e) {
+    console.log("---delete user failed:", e);
+    return res.status(200).json({
+      errCode: 1,
+      errMessage: "delete user failed",
+    });
+  }
+};
+
 /// SELLER CONTROLLER
 
 const uploadProduct = async (req, res) => {
@@ -285,4 +385,8 @@ module.exports = {
   getAllConversation: getAllConversation,
   confirmProduct: confirmProduct,
   deleteProduct: deleteProduct,
+  editUser: editUser,
+  getUsers: getUsers,
+  createUser: createUser,
+  deleteUser: deleteUser,
 };

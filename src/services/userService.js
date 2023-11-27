@@ -76,6 +76,56 @@ const deleteProduct = (productId) => {
     }
   });
 };
+const getUsers = () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let res = await db.User.findAll({
+        attributes: {
+          exclude: ["password"],
+        },
+      });
+      resolve(res);
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
+const editUser = (data, userId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let res = await db.User.update(data, { where: { id: userId } });
+      console.log(">>>data in service:", data);
+      resolve(data);
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
+const createUser = (data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let res = await db.User.create(data);
+      resolve(res);
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
+const deleteUser = (userId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let res = await db.User.destroy({
+        where: { id: userId },
+      });
+      resolve(res);
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
 
 //SELLER SERVICE
 
@@ -201,4 +251,8 @@ module.exports = {
   getAllConversation: getAllConversation,
   confirmProduct: confirmProduct,
   deleteProduct: deleteProduct,
+  editUser: editUser,
+  getUsers: getUsers,
+  createUser: createUser,
+  deleteUser: deleteUser,
 };
