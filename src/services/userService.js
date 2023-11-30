@@ -103,6 +103,24 @@ const editUser = (data, userId) => {
   });
 };
 
+const completeOrders = (arrOrdersId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let res = await db.Order.update(
+        { statusName: "COMPLETED" },
+        { where: { productId: arrOrdersId } }
+      );
+      await db.Product.update(
+        { statusId: "SOLD OUT" },
+        { where: { id: arrOrdersId } }
+      );
+      resolve(res);
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
 const createUser = (data) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -121,6 +139,63 @@ const deleteUser = (userId) => {
         where: { id: userId },
       });
       resolve(res);
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
+// BUYER SERVICE
+const getCart = (ownCartId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let res = await db.Cart.findAll({
+        where: { ownCartId: ownCartId, statusName: "IN CART" },
+        include: [{ model: db.Product }, { model: db.User }],
+      });
+      resolve(res);
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
+const getDeliveryAddress = (userId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let res = await db.DeliveryAddress.findOne({
+        where: { userId: userId },
+      });
+      resolve(res);
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
+const createOrders = (data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let res = await db.Order.bulkCreate(data);
+      resolve(res);
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
+const setOrdered = (arrProducts) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let res1 = await db.Cart.update(
+        { statusName: "ORDERED" },
+        { where: { productId: arrProducts } }
+      );
+      let res2 = await db.Product.update(
+        { statusId: "SOLD OUT" },
+        { where: { id: arrProducts } }
+      );
+      resolve(res1);
     } catch (e) {
       reject(e);
     }
@@ -150,6 +225,44 @@ const productDetail = (id) => {
         include: [{ model: db.User }, { model: db.AllCode }],
       });
       resolve(data);
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
+// GET ORDERS
+const getOrders = (role, userId, statusName) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (role === "admin") {
+        let res = await db.Order.findAll({
+          where: { statusName: statusName },
+          include: [
+            { model: db.User },
+            { model: db.Product, include: [{ model: db.User }] },
+          ],
+        });
+        resolve(res);
+      } else if (role === "buyer") {
+        let res = await db.Order.findAll({
+          where: {
+            buyerId: userId,
+            statusName: statusName,
+          },
+          include: [{ model: db.User }, { model: db.Product }],
+        });
+        resolve(res);
+      } else if (role === "seller") {
+        let res = await db.Order.findAll({
+          where: {
+            sellerId: userId,
+            statusName: statusName,
+          },
+          include: [{ model: db.User }, { model: db.Product }],
+        });
+        resolve(res);
+      }
     } catch (e) {
       reject(e);
     }
@@ -255,4 +368,10 @@ module.exports = {
   getUsers: getUsers,
   createUser: createUser,
   deleteUser: deleteUser,
+  getOrders: getOrders,
+  completeOrders: completeOrders,
+  getCart: getCart,
+  getDeliveryAddress: getDeliveryAddress,
+  createOrders: createOrders,
+  setOrdered: setOrdered,
 };

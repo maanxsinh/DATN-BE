@@ -25,6 +25,12 @@ let initWebRoutes = (app) => {
   router.post("/editUser", userController.editUser);
   router.post("/createUser", userController.createUser);
   router.post("/deleteUser", userController.deleteUser);
+  router.get("/getOrders", userController.getOrders);
+  router.post("/completeOrders", userController.completeOrders);
+  router.get("/getCart", userController.getCart);
+  router.get("/getDeliveryAddress", userController.getDeliveryAddress);
+  router.post("/createOrders", userController.createOrders);
+  router.post("/setOrdered", userController.setOrdered);
 
   return app.use("/", router);
 };

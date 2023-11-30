@@ -211,6 +211,181 @@ const deleteUser = async (req, res) => {
   }
 };
 
+const completeOrders = async (req, res) => {
+  try {
+    let arrOrdersId = req.body.arrOrdersId;
+    let arrTest = [26];
+    if (!arrOrdersId) {
+      return res.status(200).json({
+        errCode: 1,
+        errMessage: "missing array orders id",
+      });
+    }
+    let ordersComplete = await userService.completeOrders(arrTest);
+    return res.status(200).json({
+      errCode: 0,
+      errMessage: "success",
+      data: ordersComplete,
+    });
+  } catch (e) {
+    console.log(">>> complete orders failed:", e);
+    return res.status(200).json({
+      errCode: 1,
+      errMessage: ">>> complete orders failed",
+    });
+  }
+};
+
+// BUYER CONTROLLER
+
+const getCart = async (req, res) => {
+  try {
+    let ownCartId = req.query.ownCartId;
+    if (!ownCartId) {
+      return res.status(200).json({
+        errCode: 1,
+        errMessage: "missing ownCartId",
+      });
+    }
+    let cart = await userService.getCart(ownCartId);
+    let authorArr = null;
+    // console.log(">>>includes:", authorArr.includes(cart[0].authorName));
+    // authorArr.push(cart[0].authorName);
+    const setAuthorArr = () => {
+      let arr = cart.map((item) => {
+        return item.authorName;
+      });
+      authorArr = arr.filter(function (item, pos) {
+        return arr.indexOf(item) == pos;
+      });
+    };
+    setAuthorArr();
+
+    return res.status(200).json({
+      errCode: 0,
+      errMessage: "success",
+      data: cart,
+      authorArr: authorArr,
+    });
+  } catch (e) {
+    console.log("---get cart failed:", e);
+    return res.status(200).json({
+      errCode: 1,
+      errMessage: "---get cart failed",
+    });
+  }
+};
+
+const getDeliveryAddress = async (req, res) => {
+  try {
+    let userId = req.query.userId;
+    if (!userId) {
+      return res.status(200).json({
+        errCode: 1,
+        errMessage: "missing userId",
+      });
+    }
+    let deliveryAddress = await userService.getDeliveryAddress(userId);
+    return res.status(200).json({
+      errCode: 0,
+      errMessage: "success",
+      data: deliveryAddress,
+    });
+  } catch (e) {
+    console.log("---get delivery address failed:", e);
+    return res.status(200).json({
+      errCode: 1,
+      errMessage: "---get delivery address failed",
+    });
+  }
+};
+
+const createOrders = async (req, res) => {
+  try {
+    let data = req.body.data;
+    let dataTest = [{ buyerId: 4 }, { sellerId: 5 }];
+    if (!data) {
+      return res.status(200).json({
+        errCode: 1,
+        errMessage: "missing data",
+      });
+    }
+    let ordersCreate = await userService.createOrders(data);
+    return res.status(200).json({
+      errCode: 0,
+      errMessage: "success",
+      data: ordersCreate,
+    });
+  } catch (e) {
+    console.log("---create orders failed:", e);
+    return res.status(200).json({
+      errCode: 1,
+      errMessage: "---create orders failed",
+    });
+  }
+};
+
+const setOrdered = async (req, res) => {
+  try {
+    let arrProducts = req.body.arrProducts;
+    let arrTest = [17, 32];
+    if (!arrProducts) {
+      return res.status(200).json({
+        errCode: 1,
+        errMessage: "missing arrProducts",
+      });
+    }
+    let data = await userService.setOrdered(arrProducts);
+    return res.status(200).json({
+      errCode: 0,
+      errMessage: "success",
+      data: data,
+    });
+  } catch (e) {
+    console.log("---set orders failed:", e);
+    return res.status(200).json({
+      errCode: 1,
+      errMessage: "---set orders failed",
+    });
+  }
+};
+
+/// GET ORDERS
+const getOrders = async (req, res) => {
+  try {
+    let role = req.query.role;
+    let userId = req.query.userId;
+    let statusName = req.query.statusName;
+    if (!role || !statusName) {
+      return res.status(200).json({
+        errCode: 1,
+        errMessage: "missing role or statusName",
+      });
+    }
+    let orders = await userService.getOrders(role, userId, statusName);
+    // if (orders && orders.length > 0) {
+    //   orders.map((item) => {
+    //     item.Product.imageToBase64 = new Buffer(
+    //       item.Product.image.data,
+    //       "base64"
+    //     ).toString("binary");
+    //     return item;
+    //   });
+    // }
+    return res.status(200).json({
+      errCode: 0,
+      errMessage: "success",
+      data: orders,
+    });
+  } catch (e) {
+    console.log("---get orders failed:", e);
+    return res.status(200).json({
+      errCode: 1,
+      errMessage: "---get orders failed",
+    });
+  }
+};
+
 /// SELLER CONTROLLER
 
 const uploadProduct = async (req, res) => {
@@ -389,4 +564,10 @@ module.exports = {
   getUsers: getUsers,
   createUser: createUser,
   deleteUser: deleteUser,
+  getOrders: getOrders,
+  completeOrders: completeOrders,
+  getCart: getCart,
+  getDeliveryAddress: getDeliveryAddress,
+  createOrders: createOrders,
+  setOrdered: setOrdered,
 };
