@@ -16,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
       buyerId: DataTypes.INTEGER,
       // OrderId: DataTypes.INTEGER,
       sellerId: DataTypes.INTEGER,
+      addressId: DataTypes.INTEGER,
       statusName: DataTypes.STRING,
     },
     {
@@ -28,6 +29,7 @@ module.exports = (sequelize, DataTypes) => {
     models.Order.belongsTo(models.Product, {
       foreignKey: "productId",
     });
+    models.Order.belongsTo(models.DeliveryAddress, { foreignKey: "addressId" });
   };
   return Order;
 };

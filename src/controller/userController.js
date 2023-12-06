@@ -276,6 +276,58 @@ const getCart = async (req, res) => {
   }
 };
 
+const createDeliveryAddress = async (req, res) => {
+  try {
+    let userId = req.body.userId;
+    let data = req.body.data;
+    let dataTest = { userId: 4 };
+    if (!data || !userId) {
+      return res.status(200).json({
+        errCode: 1,
+        errMessage: "missing data or userId",
+      });
+    }
+    let addressInf = await userService.createDeliveryAddress(userId, data);
+    return res.status(200).json({
+      errCode: 0,
+      errMessage: "success",
+      data: addressInf,
+    });
+  } catch (e) {
+    console.log("---create delivery address failed:", e);
+    return res.status(200).json({
+      errCode: 1,
+      errMessage: "create delivery address failed",
+    });
+  }
+};
+
+const updateDeliveryAddress = async (req, res) => {
+  try {
+    let userId = req.body.userId;
+    let data = req.body.data;
+    let dataTest = { address: "abc" };
+    if (!userId || !data) {
+      return res.status(200).json({
+        errCode: 1,
+        errMessage: "missing userId or data",
+      });
+    }
+    let updateAddress = await userService.updateDeliveryAddress(userId, data);
+    return res.status(200).json({
+      errCode: 0,
+      errMessage: "success",
+      data: updateAddress,
+    });
+  } catch (e) {
+    console.log("---update delivery address failed:", e);
+    return res.status(200).json({
+      errCode: 1,
+      errMessage: "---update delivery address failed",
+    });
+  }
+};
+
 const getDeliveryAddress = async (req, res) => {
   try {
     let userId = req.query.userId;
@@ -346,6 +398,84 @@ const setOrdered = async (req, res) => {
     return res.status(200).json({
       errCode: 1,
       errMessage: "---set orders failed",
+    });
+  }
+};
+
+const isProductExist = async (req, res) => {
+  try {
+    let data = req.query.data;
+    let dataTest = {
+      authorName: "Nguyen Van Quan",
+      ownCartId: 2,
+      productId: 8,
+    };
+    if (!data) {
+      return res.status(200).json({
+        errCode: 1,
+        errMessage: "missing data to check exist",
+      });
+    }
+    let isExist = await userService.isProductExist(data);
+    return res.status(200).json({
+      errCode: 0,
+      errMessage: "check success",
+      data: isExist,
+    });
+  } catch (e) {
+    console.log("---check product exist in cart failed:", e);
+    return res.status(200).json({
+      errCode: 1,
+      errMessage: "---check product exist in cart failed:",
+    });
+  }
+};
+
+const addToCart = async (req, res) => {
+  try {
+    let data = req.body.data;
+    let dataTest = { authorName: "111" };
+    if (!data) {
+      return res.status(200).json({
+        errCode: 1,
+        errMessage: "missing data to add to cart",
+      });
+    }
+    let addPro = await userService.addToCart(data);
+    return res.status(200).json({
+      errCode: 0,
+      errMessage: "success",
+      data: addPro,
+    });
+  } catch (e) {
+    console.log("--add to cart failed:", e);
+    return res.status(200).json({
+      errCode: 1,
+      errMessage: "--- add to cart failed",
+    });
+  }
+};
+
+const cancelOrders = async (req, res) => {
+  try {
+    let productId = req.body.productId;
+    if (!productId) {
+      return res.status(200).json({
+        errCode: 1,
+        errMessage: "missing productId",
+      });
+    }
+    let product = await userService.cancelOrders(productId);
+    return res.status(200).json({
+      errCode: 0,
+      errMessage: "success",
+      data: product,
+    });
+  } catch (e) {
+    console.log("---cancel orders failed:", e);
+    return res.status(200).json({
+      errCode: 1,
+      errMessage: "---cancel orders failed",
     });
   }
 };
@@ -570,4 +700,9 @@ module.exports = {
   getDeliveryAddress: getDeliveryAddress,
   createOrders: createOrders,
   setOrdered: setOrdered,
+  createDeliveryAddress: createDeliveryAddress,
+  updateDeliveryAddress: updateDeliveryAddress,
+  isProductExist: isProductExist,
+  addToCart: addToCart,
+  cancelOrders: cancelOrders,
 };

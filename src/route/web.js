@@ -31,6 +31,11 @@ let initWebRoutes = (app) => {
   router.get("/getDeliveryAddress", userController.getDeliveryAddress);
   router.post("/createOrders", userController.createOrders);
   router.post("/setOrdered", userController.setOrdered);
+  router.post("/createDeliveryAddress", userController.createDeliveryAddress);
+  router.post("/updateDeliveryAddress", userController.updateDeliveryAddress);
+  router.get("/isProductExist", userController.isProductExist);
+  router.post("/addToCart", userController.addToCart);
+  router.post("/cancelOrders", userController.cancelOrders);
 
   return app.use("/", router);
 };

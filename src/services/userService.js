@@ -159,6 +159,39 @@ const getCart = (ownCartId) => {
     }
   });
 };
+const createDeliveryAddress = (userId, data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let isExist = await db.DeliveryAddress.findOne({
+        where: { userId: userId },
+      });
+      if (isExist === null) {
+        console.log(">>>create delivery address");
+        let res = await db.DeliveryAddress.create(data);
+        resolve(res);
+      }
+      resolve(isExist);
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
+const updateDeliveryAddress = (userId, data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let isExist = await db.DeliveryAddress.findOne({
+        where: { userId: userId },
+      });
+      if (isExist !== null) {
+        await db.DeliveryAddress.update(data, { where: { userId: userId } });
+      }
+      resolve(isExist);
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
 
 const getDeliveryAddress = (userId) => {
   return new Promise(async (resolve, reject) => {
@@ -196,6 +229,47 @@ const setOrdered = (arrProducts) => {
         { where: { id: arrProducts } }
       );
       resolve(res1);
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
+const isProductExist = (data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let res = await db.Cart.findOne({ where: data });
+      resolve(res);
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
+const addToCart = (data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let res = await db.Cart.create(data);
+      resolve(res);
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
+const cancelOrders = (productId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let res = await db.Order.destroy({ where: { productId: productId } });
+      await db.Cart.update(
+        { statusName: "IN CART" },
+        { where: { productId: productId } }
+      );
+      await db.Product.update(
+        { statusId: "CONFIRMED" },
+        { where: { id: productId } }
+      );
+      resolve(res);
     } catch (e) {
       reject(e);
     }
@@ -241,6 +315,7 @@ const getOrders = (role, userId, statusName) => {
           include: [
             { model: db.User },
             { model: db.Product, include: [{ model: db.User }] },
+            { model: db.DeliveryAddress },
           ],
         });
         resolve(res);
@@ -250,7 +325,10 @@ const getOrders = (role, userId, statusName) => {
             buyerId: userId,
             statusName: statusName,
           },
-          include: [{ model: db.User }, { model: db.Product }],
+          include: [
+            { model: db.User },
+            { model: db.Product, include: [{ model: db.User }] },
+          ],
         });
         resolve(res);
       } else if (role === "seller") {
@@ -259,7 +337,10 @@ const getOrders = (role, userId, statusName) => {
             sellerId: userId,
             statusName: statusName,
           },
-          include: [{ model: db.User }, { model: db.Product }],
+          include: [
+            { model: db.User },
+            { model: db.Product, include: [{ model: db.User }] },
+          ],
         });
         resolve(res);
       }
@@ -374,4 +455,9 @@ module.exports = {
   getDeliveryAddress: getDeliveryAddress,
   createOrders: createOrders,
   setOrdered: setOrdered,
+  createDeliveryAddress: createDeliveryAddress,
+  updateDeliveryAddress: updateDeliveryAddress,
+  isProductExist: isProductExist,
+  addToCart: addToCart,
+  cancelOrders: cancelOrders,
 };
