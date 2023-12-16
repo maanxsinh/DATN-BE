@@ -480,6 +480,30 @@ const cancelOrders = async (req, res) => {
   }
 };
 
+const confirmOrders = async (req, res) => {
+  try {
+    let productId = req.body.productId;
+    if (!productId) {
+      return res.status(200).json({
+        errCode: 1,
+        errMessage: "missing productId",
+      });
+    }
+    let data = await userService.confirmOrders(productId);
+    return res.status(200).json({
+      errCode: 0,
+      errMessage: "success",
+      data: data,
+    });
+  } catch (e) {
+    console.log("---confirm orders failed:", e);
+    return res.status(200).json({
+      errCode: 1,
+      errMessage: "---confirm orders failed",
+    });
+  }
+};
+
 /// GET ORDERS
 const getOrders = async (req, res) => {
   try {
@@ -540,6 +564,32 @@ const uploadProduct = async (req, res) => {
     return res.status(400).json({
       errCode: 1,
       errMessage: ">>>>>>upload failed",
+    });
+  }
+};
+
+const editProduct = async (req, res) => {
+  try {
+    let data = req.body.data;
+    let productId = req.body.productId;
+    let dataTest = { description: undefined };
+    if (!productId) {
+      return res.status(200).json({
+        errCode: 1,
+        errMessage: "missing productId",
+      });
+    }
+    let productEdit = await userService.editProduct(data, productId);
+    return res.status(200).json({
+      errCode: 0,
+      errMessage: "success",
+      data: productEdit,
+    });
+  } catch (e) {
+    console.log("---edit product failed:", e);
+    return res.status(200).json({
+      errCode: 1,
+      errMessage: "---edit product failed",
     });
   }
 };
@@ -705,4 +755,6 @@ module.exports = {
   isProductExist: isProductExist,
   addToCart: addToCart,
   cancelOrders: cancelOrders,
+  confirmOrders: confirmOrders,
+  editProduct: editProduct,
 };

@@ -276,6 +276,20 @@ const cancelOrders = (productId) => {
   });
 };
 
+const confirmOrders = (productId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let res = await db.Order.update(
+        { statusName: "CONFIRMED" },
+        { where: { productId: productId } }
+      );
+      resolve(res);
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
 //SELLER SERVICE
 
 const uploadProduct = (data) => {
@@ -283,6 +297,17 @@ const uploadProduct = (data) => {
     try {
       await db.Product.create(data);
       resolve(data);
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
+const editProduct = (data, productId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let res = await db.Product.update(data, { where: { id: productId } });
+      resolve(res);
     } catch (e) {
       reject(e);
     }
@@ -408,15 +433,13 @@ const getAllConversation = (currentUserId) => {
         where: { idMaster: currentUserId },
         include: [{ model: db.User }],
       });
-      let partner0 = data0.map(async (item) => {
-        let partner = await db.User.findAll({
-          where: { id: "5" },
-        });
-        return item;
+      let partner0 = data0.map((item) => {
+        let arrIdMemmber = item.idMember;
+        return arrIdMemmber;
       });
 
       let partner1 = await db.User.findAll({
-        where: { id: "5" },
+        where: { id: partner0 },
       });
 
       let data1 = await db.Conversation.findAll({
@@ -426,7 +449,7 @@ const getAllConversation = (currentUserId) => {
       data = {
         imsender: data0,
         imreceiver: data1,
-        partner0: partner0,
+        partner: partner1,
       };
       resolve(data);
     } catch (e) {
@@ -460,4 +483,6 @@ module.exports = {
   isProductExist: isProductExist,
   addToCart: addToCart,
   cancelOrders: cancelOrders,
+  confirmOrders: confirmOrders,
+  editProduct: editProduct,
 };

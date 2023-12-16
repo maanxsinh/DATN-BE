@@ -36,6 +36,8 @@ let initWebRoutes = (app) => {
   router.get("/isProductExist", userController.isProductExist);
   router.post("/addToCart", userController.addToCart);
   router.post("/cancelOrders", userController.cancelOrders);
+  router.post("/confirmOrders", userController.confirmOrders);
+  router.post("/editProduct", userController.editProduct);
 
   return app.use("/", router);
 };
