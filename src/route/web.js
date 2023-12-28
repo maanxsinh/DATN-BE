@@ -38,6 +38,7 @@ let initWebRoutes = (app) => {
   router.post("/cancelOrders", userController.cancelOrders);
   router.post("/confirmOrders", userController.confirmOrders);
   router.post("/editProduct", userController.editProduct);
+  router.post("/sendMessage", userController.sendMessage);
 
   return app.use("/", router);
 };

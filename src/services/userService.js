@@ -406,18 +406,27 @@ const conversationExist = (bothID) => {
   });
 };
 
-const getMessage = (conversationName) => {
+const getMessage = (conversationId, userId) => {
   return new Promise(async (resolve, reject) => {
     try {
-      let dataConversation = await db.Conversation.findOne({
-        where: { conversationName: conversationName },
+      let myMessage = await db.Message.findAll({
+        where: { conversationId: conversationId, senderId: userId },
+        // include: [{ model: db.User}, ],
       });
-
-      let dataMessage = await db.Message.findAll({
-        where: { conversationId: dataConversation.id },
-        include: [{ model: db.User }, { model: db.Conversation }],
+      let otherMessage = await db.Message.findAll({
+        where: { conversationId: conversationId, receiverId: userId },
+        // include: [{ model: db.User}, ],
       });
-      resolve(dataMessage);
+      let allMessage = await db.Message.findAll({
+        where: { conversationId: conversationId },
+        // include: [{ model: db.User}, ],
+      });
+      let data = {
+        myMessage: myMessage,
+        otherMessage: otherMessage,
+        allMessage: allMessage,
+      };
+      resolve(allMessage);
     } catch (e) {
       reject(e);
     }
@@ -431,7 +440,7 @@ const getAllConversation = (currentUserId) => {
       let dataPartner = [1, 2, 3, 4, 5];
       let data0 = await db.Conversation.findAll({
         where: { idMaster: currentUserId },
-        include: [{ model: db.User }],
+        include: [{ model: db.User, as: "member" }],
       });
       let partner0 = data0.map((item) => {
         let arrIdMemmber = item.idMember;
@@ -444,14 +453,25 @@ const getAllConversation = (currentUserId) => {
 
       let data1 = await db.Conversation.findAll({
         where: { idMember: currentUserId },
-        include: [{ model: db.User }],
+        include: [{ model: db.User, as: "master" }],
       });
       data = {
         imsender: data0,
         imreceiver: data1,
-        partner: partner1,
+        // partner: partner1,
       };
       resolve(data);
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
+const sendMessage = (dataMessage) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let res = await db.Message.create(dataMessage);
+      resolve(res);
     } catch (e) {
       reject(e);
     }
@@ -485,4 +505,5 @@ module.exports = {
   cancelOrders: cancelOrders,
   confirmOrders: confirmOrders,
   editProduct: editProduct,
+  sendMessage: sendMessage,
 };

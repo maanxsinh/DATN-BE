@@ -22,10 +22,17 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
   Conversation.associate = function (models) {
-    models.User.hasMany(models.Message, {
-      foreignKey: "conversationId",
+    // models.User.hasMany(models.Message, {
+    //   foreignKey: "conversationId",
+    // });
+    models.Conversation.belongsTo(models.User, {
+      as: "master",
+      foreignKey: "idMaster",
     });
-    models.Conversation.belongsTo(models.User, { foreignKey: "idMaster" });
+    models.Conversation.belongsTo(models.User, {
+      as: "member",
+      foreignKey: "idMember",
+    });
     // models.Conversation.belongsTo(models.User, { foreignKey: "idMember" });
     // models.User.hasMany(models.Message, {
     //   foreignKey: "senderId",

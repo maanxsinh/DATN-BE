@@ -32,15 +32,19 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: "IdAuthor",
     });
     models.User.hasMany(models.Message, {
+      as: "sender",
       foreignKey: "senderId",
     });
     models.User.hasMany(models.Message, {
+      as: "receiver",
       foreignKey: "receiverId",
     });
     models.User.hasMany(models.Conversation, {
+      as: "master",
       foreignKey: "idMaster",
     });
     models.User.hasMany(models.Conversation, {
+      as: "member",
       foreignKey: "idMember",
     });
     models.User.hasMany(models.Order, {

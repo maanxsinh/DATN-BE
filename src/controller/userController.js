@@ -682,15 +682,15 @@ const conversationExist = async (req, res) => {
 const getMessage = async (req, res) => {
   try {
     let conversationId = req.query.conversationId;
-    let conversationName = req.query.conversationName;
-    if (!conversationName) {
+    let userId = req.query.userId;
+    if (!conversationId || !userId) {
       return res.status(200).json({
         errCode: 1,
-        errMessage: "missing conversation name",
+        errMessage: "missing conversationId or userId",
       });
     }
-    let data = await userService.getMessage(conversationName);
-    console.log(data);
+    let data = await userService.getMessage(conversationId, userId);
+
     return res.status(200).json({
       errCode: 0,
       errMessage: "success",
@@ -715,7 +715,7 @@ const getAllConversation = async (req, res) => {
       });
     }
     let data = await userService.getAllConversation(currentUserId);
-    console.log("all data:", data);
+    // console.log("all data:", data);
     return res.status(200).json({
       errCode: 0,
       errMessage: "success",
@@ -726,6 +726,36 @@ const getAllConversation = async (req, res) => {
     return res.status(200).json({
       errCode: 1,
       errMessage: "get all conversation failed",
+    });
+  }
+};
+
+const sendMessage = async (req, res) => {
+  try {
+    let dataMessage = req.body.dataMessage;
+    let dataTest = {
+      conversationId: 8,
+      senderId: 4,
+      receiverId: 2,
+      content: "hello world!",
+    };
+    if (!dataMessage) {
+      return res.status(200).json({
+        errCode: 1,
+        errMessage: "missing data message",
+      });
+    }
+    let data = await userService.sendMessage(dataMessage);
+    return res.status(200).json({
+      errCode: 0,
+      errMessage: "success",
+      data: data,
+    });
+  } catch (e) {
+    console.log("send message failed:", e);
+    return res.status(200).json({
+      errCode: 1,
+      errMessage: "send message failed",
     });
   }
 };
@@ -757,4 +787,5 @@ module.exports = {
   cancelOrders: cancelOrders,
   confirmOrders: confirmOrders,
   editProduct: editProduct,
+  sendMessage: sendMessage,
 };
